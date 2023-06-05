@@ -1,0 +1,8 @@
+__pycache__/
+.idea/
+
+*.db
+*.h5
+*.csv
+*.xlsx
+*.zip
