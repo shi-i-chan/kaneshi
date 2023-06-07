@@ -25,18 +25,18 @@ class DefaultBinanceData:
         self.symbols = symbols
         self.interval = interval
         self.temp_folder = temp_folder
-        self.current_symbol = None
-        self.current_df_fn = None
-        self.candles_columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume',
-                                'Close time', 'Quote asset volume', 'Number of trades',
-                                'Taker buy base asset volume', 'Taker buy quote asset volume',
-                                'Ignore']
+        self._current_symbol = None
+        self._current_df_fn = None
+        self._candles_columns = ['Open time', 'Open', 'High', 'Low', 'Close', 'Volume',
+                                 'Close time', 'Quote asset volume', 'Number of trades',
+                                 'Taker buy base asset volume', 'Taker buy quote asset volume',
+                                 'Ignore']
 
-    def get_current_symbol(self, *args, **kwargs):
+    def _get_current_symbol(self, *args, **kwargs):
         raise NotImplementedError
 
     @staticmethod
-    def clear_candle_df(df: pd.DataFrame) -> pd.DataFrame:
+    def _clear_candle_df(df: pd.DataFrame) -> pd.DataFrame:
         """ Clear raw candles df. Set dt indices and remove trash """
         df['Open time'] = df['Open time'].apply(lambda x: datetime.fromtimestamp(x / 1e3))
         df.index = df['Open time'].values
@@ -46,9 +46,9 @@ class DefaultBinanceData:
     def get_candles(self) -> NoReturn:
         """ Iterate symbols and get data """
         for current_symbol in self.symbols:
-            self.current_symbol = current_symbol
-            self.current_df_fn = fr'{DEF_MARKET_DATA_PATH}\raw_{self.current_symbol}_{self.interval}'
-            self.get_current_symbol(check_filename=f'{self.current_df_fn}.{DEF_DF_EXTENSION}')
+            self._current_symbol = current_symbol
+            self._current_df_fn = fr'{DEF_MARKET_DATA_PATH}\raw_{self._current_symbol}_{self.interval}'
+            self._get_current_symbol(check_filename=f'{self._current_df_fn}.{DEF_DF_EXTENSION}')
 
 
 class BinanceVisionData(DefaultBinanceData, TempFolderContext):
@@ -60,25 +60,25 @@ class BinanceVisionData(DefaultBinanceData, TempFolderContext):
 
     @staticmethod
     @if_file
-    def parse_data(url, filename: str, *args, **kwargs) -> NoReturn:  # NOQA
+    def _parse_data(url, filename: str, *args, **kwargs) -> NoReturn:  # NOQA
         """ Parse data by url and save in filename """
         urllib.request.urlretrieve(url, filename)  # NOQA
 
     @if_file
-    def unpack_data(self, filename: str, *args, **kwargs) -> NoReturn:  # NOQA
+    def _unpack_data(self, filename: str, *args, **kwargs) -> NoReturn:  # NOQA
         """ Unpack .zip archive and remove it """
         with zipfile.ZipFile(filename, 'r') as zip_ref:
             zip_ref.extractall(self.temp_folder)
         os.remove(filename)
 
-    def get_candle_url_fn_list(self, day: datetime) -> Tuple[str, str]:
+    def _get_candle_url_fn_list(self, day: datetime) -> Tuple[str, str]:
         """ Generate url and filename for specific year and month """
-        def_fn = f"{self.current_symbol}-{self.interval}-{day.year}-{'{:02d}'.format(day.month)}"
+        def_fn = f"{self._current_symbol}-{self.interval}-{day.year}-{'{:02d}'.format(day.month)}"
         fn = def_fn + '.zip' if self.type_ == 'monthly' else def_fn + f"-{'{:02d}'.format(day.day)}.zip"
-        link = f'https://data.binance.vision/data/spot/{self.type_}/klines/{self.current_symbol}/{self.interval}/{fn}'
+        link = f'https://data.binance.vision/data/spot/{self.type_}/klines/{self._current_symbol}/{self.interval}/{fn}'
         return link, (self.temp_folder + fn)
 
-    def get_url_fn_list(self, url_fn_generator: Callable) -> List[Tuple[str, str]]:
+    def _get_url_fn_list(self, url_fn_generator: Callable) -> List[Tuple[str, str]]:
         """ Generate urls and filenames for all years and month in given ranges """
         if self.type_ == 'daily':
             n_day = (self.e_date - self.s_date).days + 1
@@ -88,26 +88,26 @@ class BinanceVisionData(DefaultBinanceData, TempFolderContext):
             dates = [self.s_date + relativedelta(months=i) for i in range(n_month)]
         return [url_fn_generator(day) for day in dates]
 
-    def download_unpack(self, all_url_fn: List) -> NoReturn:
+    def _download_unpack(self, all_url_fn: List) -> NoReturn:
         """ Download and unpack archives """
         fn_list = []
-        for url, filename in tqdm(all_url_fn, desc=f'{self.current_symbol}'):
-            self.parse_data(url, filename, check_filename=filename)
+        for url, filename in tqdm(all_url_fn, desc=f'{self._current_symbol}'):
+            self._parse_data(url, filename, check_filename=filename)
             fn_list.append(fn := os.path.splitext(filename)[0] + '.csv')
-            self.unpack_data(filename, check_filename=fn)
+            self._unpack_data(filename, check_filename=fn)
         return fn_list
 
-    def collect_files(self, fn_list: List) -> NoReturn:
+    def _collect_files(self, fn_list: List) -> NoReturn:
         """ Finally collect all unpacked .csv files """
         dfs = [read_df(os.path.splitext(fn)[0], extension='csv',
-                       columns=self.candles_columns, index_col=None) for fn in fn_list]
+                       columns=self._candles_columns, index_col=None) for fn in fn_list]
         full_df = pd.concat(dfs).drop_duplicates()
-        full_df = self.clear_candle_df(full_df)
-        save_df(full_df, self.current_df_fn)
+        full_df = self._clear_candle_df(full_df)
+        save_df(full_df, self._current_df_fn)
 
     @if_file
-    def get_current_symbol(self, *args, **kwargs) -> NoReturn:  # NOQA
+    def _get_current_symbol(self, *args, **kwargs) -> NoReturn:  # NOQA
         """ Get candles data for specific symbol if it doesn't exist yet """
-        url_fn_list = self.get_url_fn_list(self.get_candle_url_fn_list)
-        fn_list = self.download_unpack(url_fn_list)
-        self.collect_files(fn_list)
+        url_fn_list = self._get_url_fn_list(self._get_candle_url_fn_list)
+        fn_list = self._download_unpack(url_fn_list)
+        self._collect_files(fn_list)

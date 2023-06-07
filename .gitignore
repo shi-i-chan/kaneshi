@@ -6,3 +6,5 @@ __pycache__/
 *.csv
 *.xlsx
 *.zip
+
+!/kaneshi/tests/BTC_2021.h5
