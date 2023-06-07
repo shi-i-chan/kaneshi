@@ -3,3 +3,5 @@ tqdm~=4.65.0
 numpy~=1.23.5
 plotly~=5.13.1
 python-dateutil~=2.8.2
+matplotlib~=3.7.1
+Pillow~=9.4.0

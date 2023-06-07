@@ -6,22 +6,18 @@ import urllib.request
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-from utils import TempFolderContext, if_file, save_df, read_df
+from kaneshi.utils import TempFolderContext, if_file, save_df, read_df
 from kaneshi.config import DEF_DF_EXTENSION, DEF_ROUND, DEF_MARKET_DATA_PATH
 
 from typing import List, NoReturn, Tuple, Callable
-
-
-# При окончании месяца данные могут еще не быть на сайте, так что нихрена не будет работать
-# Лучше бы переписать на скачивание по дням
 
 
 class DefaultBinanceData:
     def __init__(self,
                  s_date: Tuple[int],
                  e_date: Tuple[int],
-                 interval: str,
                  symbols: List[str],
+                 interval: str = '1m',
                  temp_folder: str = 'temp_folder/',
                  ):
         self.s_date = datetime(*s_date)
@@ -89,13 +85,13 @@ class BinanceVisionData(DefaultBinanceData, TempFolderContext):
             dates = [self.s_date + timedelta(days=i) for i in range(n_day)]
         else:
             n_month = (self.e_date.year - self.s_date.year) * 12 + self.e_date.month - self.s_date.month + 1
-            dates = [self.e_date + relativedelta(months=i) for i in range(n_month)]
+            dates = [self.s_date + relativedelta(months=i) for i in range(n_month)]
         return [url_fn_generator(day) for day in dates]
 
     def download_unpack(self, all_url_fn: List) -> NoReturn:
         """ Download and unpack archives """
         fn_list = []
-        for url, filename in tqdm(all_url_fn):
+        for url, filename in tqdm(all_url_fn, desc=f'{self.current_symbol}'):
             self.parse_data(url, filename, check_filename=filename)
             fn_list.append(fn := os.path.splitext(filename)[0] + '.csv')
             self.unpack_data(filename, check_filename=fn)

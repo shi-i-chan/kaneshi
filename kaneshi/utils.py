@@ -1,12 +1,18 @@
+import io
 import os
 import shutil
+import numpy as np
 import pandas as pd
+from PIL import Image
 from functools import wraps
+import matplotlib.pyplot as plt
 from signal import signal, SIGINT
+import plotly.graph_objects as go
 
 from kaneshi.config import DEF_DF_EXTENSION
 
-from typing import Callable, NoReturn, List
+from numpy.typing import NDArray
+from typing import Callable, NoReturn, List, Union
 
 
 def save_df(df: pd.DataFrame, df_fn: str, extension: str = DEF_DF_EXTENSION) -> NoReturn:
@@ -57,4 +63,30 @@ class TempFolderContext:
     def _sigint_handler(self, signal_received, frame):  # NOQA
         """ Call __exit__ if KeyboardInterrupt """
         self.__exit__(None, None, None)
+
+
+def process_fig(figure: go.Figure, fig_config: dict, type_: str) -> Union[NoReturn, NDArray[float]]:
+    if type_ == 'plotly':
+        figure.show(config=fig_config)
+    elif type_ == 'plt':
+        plot_plotly_as_plt(figure)
+    elif type_ == 'array':
+        return plotly_to_array(figure)
+
+
+def plot_plotly_as_plt(figure: go.Figure) -> NoReturn:
+    """ Plot figure with matplotlib """
+    fig_array = plotly_to_array(figure)
+    plt.figure(figsize=(20, 10))
+    plt.imshow(fig_array)
+    plt.axis('off')
+    plt.show()
+
+
+def plotly_to_array(figure: go.Figure) -> NDArray[float]:
+    """ Convert plotly figure to numpy array """
+    fig_bytes = figure.to_image(format="png")
+    buf = io.BytesIO(fig_bytes)
+    img = Image.open(buf)
+    return np.asarray(img)  # NOQA
 
