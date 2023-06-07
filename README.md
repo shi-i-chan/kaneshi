@@ -21,7 +21,7 @@ with BinanceVisionData(**config) as binance_data:
     binance_data.get_candles()
 ```
 
-Files `raw_BTCUSDT_1m.h5`, `raw_ETHUSDT_1m.h5`, etc will appera in folder `kaneshi\kaneshi\data\market_data`
+Files `raw_BTCUSDT_1m.h5`, `raw_ETHUSDT_1m.h5`, etc will appear in folder `kaneshi\kaneshi\data\market_data`
   
 </details>
 
