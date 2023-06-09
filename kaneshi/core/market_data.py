@@ -72,6 +72,7 @@ class MarketData:
         columns = self.raw_df.columns.tolist()
         ohlc = dict((key, ohlc[key]) for key in columns if key in ohlc)
         self.raw_df = self.raw_df.resample(f'{interval}min').apply(ohlc)
+        self.raw_df = self.raw_df.dropna()
         return self
 
     def plot_lines(self, columns: List[str] = None, type_: str = 'plotly') -> NoReturn:

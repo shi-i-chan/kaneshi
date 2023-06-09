@@ -225,7 +225,7 @@ class Strategy(StrategyPlotting):
     def apply(self) -> NoReturn:
         """ Apply strategy to all sub dfs and calc trades results """
         buy_indices, sell_indices = config.EMPTY_DT_ARRAY, config.EMPTY_DT_ARRAY
-        for idx,  _ in enumerate(iter(self.market_data)):
+        for idx, _ in enumerate(iter(self.market_data)):
             self.__init_bs_indices()
             self._apply_to_sub_df()
             self._bs_indices_to_dt()
@@ -236,14 +236,14 @@ class Strategy(StrategyPlotting):
         self._get_trades()
         return self
 
-    def generate_report(self) -> pd.DataFrame:
+    def generate_report(self, type_: str = 'list') -> pd.DataFrame:
         """ Generate report from strategy results """
         if self.trades is not None:
             result = [round(getattr(metrics, metric_name)(self), config.DEF_ROUND)
                       for metric_name in self.report_config]
         else:
             result = [-1000 for _ in range(len(self.report_config))]
-        return pd.DataFrame([result], columns=self.report_config)
+        return result if type_ == 'list' else pd.DataFrame([result], columns=self.report_config)
 
     def _get_trades(self) -> NoReturn:
         """ Calc array of trades results """
@@ -327,13 +327,14 @@ class ClearStrategy(Strategy):
             self.sell_indices = np.array(cleaned_sell_indices)
 
 
-class DetStopStrategy(Strategy):
+class FixedStopStrategy(Strategy):
     def __init__(self, stop_loss_percent: float = 0, take_profit_percent: float = 0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.stop_loss_percent = stop_loss_percent
         self.take_profit_percent = take_profit_percent
-        self.stop = signals.DetStopTake(stop_loss_percent=self.stop_loss_percent,
-                                        take_profit_percent=self.take_profit_percent)
+        self.stop = signals.FixedStopTake(stop_loss_percent=self.stop_loss_percent,
+                                          take_profit_percent=self.take_profit_percent,
+                                          interval=self.market_data.interval)
 
     def _apply_to_sub_df(self) -> NoReturn:
         """ Apply strategy to sub df, get stop indices """

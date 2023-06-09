@@ -88,5 +88,5 @@ def plotly_to_array(figure: go.Figure) -> NDArray[float]:
     fig_bytes = figure.to_image(format="png")
     buf = io.BytesIO(fig_bytes)
     img = Image.open(buf)
-    return np.asarray(img)  # NOQA
+    return (np.asarray(img) / 255).astype('float32')  # NOQA
 

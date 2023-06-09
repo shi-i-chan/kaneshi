@@ -32,7 +32,7 @@ def win_rate(strategy) -> float:
 
 
 def mean_trade_time(strategy) -> float:
-    """ Get mean trade time """
+    """ Get mean trade time in minutes """
     diff = np.array([(sell - buy).astype('timedelta64[m]')
                      for buy, sell in zip(strategy.buy_indices, strategy.sell_indices)])
     return diff.astype('int').mean()

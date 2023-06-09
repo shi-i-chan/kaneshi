@@ -26,9 +26,3 @@ DEF_REPORT_CONFIG = [
     'max_return',
     'max_drawdown',
 ]
-
-
-# from kaneshi.core.def_strategy import Strategy as def_strategy
-# from typing import TypeVar
-#
-# Strategy = TypeVar('Strategy', bound=def_strategy)

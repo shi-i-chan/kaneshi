@@ -1,7 +1,7 @@
 import numpy as np
 
 from kaneshi.core import signals, indicators
-from kaneshi.core.def_strategy import Strategy, ClearStrategy, DetStopStrategy
+from kaneshi.core.def_strategy import Strategy, ClearStrategy, FixedStopStrategy
 
 from numpy.typing import NDArray
 
@@ -42,7 +42,7 @@ class SMACClear(SMACStrategy, ClearStrategy):
         super().__init__(*args, **kwargs)
 
 
-class SMACDetStop(SMACStrategy, DetStopStrategy):
+class SMACFixedStop(SMACStrategy, FixedStopStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._add_stops_to_plot()
@@ -86,7 +86,7 @@ class RSIClear(RSIStrategy, ClearStrategy):
         super().__init__(*args, **kwargs)
 
 
-class RSIDetStop(RSIStrategy, DetStopStrategy):
+class RSIFixedStop(RSIStrategy, FixedStopStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._add_stops_to_plot()
