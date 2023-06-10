@@ -184,7 +184,7 @@ s.plot(plot_type='plt')
 
 <details open>
 <summary>
-Fixed stop PCT strategy
+Fixed stop PCT strategy (not tested normally)
 </summary>
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/pct_fixed_stop_strategy.ipynb)
