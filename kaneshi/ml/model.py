@@ -57,7 +57,7 @@ class ModelMixin:
 
         plt.figure(figsize=(20, 10))
         plt.plot([0, 1], [no_skill, no_skill], linestyle='--', label='No Skill')
-        plt.plot(model_recall, model_precision, marker='.', label='Logistic')
+        plt.plot(model_recall, model_precision, marker='.', label='Model')
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.legend()
@@ -158,17 +158,17 @@ class Model(ModelMixin):
         ax[1].legend(loc='best')
         plt.show()
 
-    def show_confusion(self, kind: str = 'test') -> NoReturn:
+    def show_confusion(self, kind: str = 'test', threshold: float = 0.5) -> NoReturn:
         """ Show confusion matrix and metrics """
-        y_pred = self.get_predictions(kind=kind)
+        y_pred = self.get_predictions(kind=kind, threshold=threshold)
         y_true = self.dataset[f'y_{kind}']
         self.get_metrics(y_true, y_pred)
         self.plot_confusion(y_true, y_pred)
 
-    def get_predictions(self, kind: str = 'test'):
+    def get_predictions(self, kind: str = 'test', threshold: float = 0.5):
         y_prob = self.model.predict(self.dataset[f'x_{kind}'])
         if self.loss == 'binary_crossentropy':
-            y_pred = ((y_prob > 0.5) + 0).ravel()
+            y_pred = ((y_prob > threshold) + 0).ravel()
         else:
             y_pred = y_prob.argmax(axis=-1)
         return y_pred
