@@ -144,6 +144,8 @@ s.plot(plot_type='plt')
 ```
 
 ![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/rsi_clear_plot.png)
+  
+</details>
 
 
 <details open>
