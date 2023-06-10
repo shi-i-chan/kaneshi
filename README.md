@@ -1,10 +1,10 @@
 # kaneshi
 
-A little project with backtesting some algorithmic trading strategies, binance trading bots and some machine learning.
+A little project with backtesting some algorithmic trading strategies, Binance trading bots, and some machine learning.
 
 <details>
 <summary>
-Getting binance data
+Getting Binance data
 </summary>
 
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/get_binance_data.ipynb)
@@ -144,8 +144,6 @@ s.plot(plot_type='plt')
 ```
 
 ![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/rsi_clear_plot.png)
-  
-</details>
 
 
 <details open>
@@ -273,7 +271,7 @@ Similar results are obtained with another architectures, tuning and other change
 
 <details open>
 <summary>
-Clear RSI strategy binance trading bot (not tested normally)
+Clear RSI strategy Binance trading bot (not tested normally)
 </summary>
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/trading/rsi_clear_bot.py)
