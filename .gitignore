@@ -8,3 +8,5 @@ __pycache__/
 *.zip
 
 !/kaneshi/tests/BTC_2021.h5
+!/kaneshi/data/datasets/14_45_55_0.01_ohlc.h5
+!/kaneshi/data/datasets/14_45_55_0.01_only_close.h5

@@ -16,6 +16,7 @@ DEF_PLOTLY_HEIGHT = 500
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEF_MARKET_DATA_PATH = rf'{ROOT_DIR}\data\market_data'
+DEF_DATASETS_PATH = rf'{ROOT_DIR}\data\datasets'
 
 DEF_REPORT_CONFIG = [
     'n_trades',

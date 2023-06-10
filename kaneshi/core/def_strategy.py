@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 
@@ -47,6 +48,20 @@ class StrategyVariables:
 
     def _apply_to_sub_df(self, *args, **kwargs):
         raise NotImplementedError
+
+
+class StrategyDatasetsMixin(StrategyVariables):
+    def create_dataset(self, lookback: int, dataset_fn: str) -> NoReturn:
+        """ Create dataset for current strategy and market data """
+        dataset_fn = f'{config.DEF_DATASETS_PATH}/{dataset_fn}.h5'
+        good_buy_idx, bad_buy_idx = self.__get_good_bad_buy_indices()
+        self.market_data.dataset_from_indices(lookback, good_buy_idx, bad_buy_idx, dataset_fn=dataset_fn)
+
+    def __get_good_bad_buy_indices(self) -> Tuple[NDArray[np.datetime64], ...]:
+        """ Get good and bad buy indices """
+        good_buy_indices = self.buy_indices[self.trades > 0]
+        bad_buy_indices = self.buy_indices[self.trades < 0]
+        return good_buy_indices, bad_buy_indices
 
 
 class StrategyPlotting(StrategyVariables):
@@ -215,7 +230,7 @@ class StrategyPlotting(StrategyVariables):
                           col=col)
 
 
-class Strategy(StrategyPlotting):
+class Strategy(StrategyPlotting, StrategyDatasetsMixin):
     def __init__(self, market_data: MarketData = None):
         super().__init__()
         self.market_data = market_data

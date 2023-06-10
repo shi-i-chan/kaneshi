@@ -90,3 +90,31 @@ class RSIFixedStop(RSIStrategy, FixedStopStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._add_stops_to_plot()
+
+
+class PCTStrategy(Strategy):
+    def __init__(self,
+                 pct_period: int = None,
+                 pct_edge: float = None,
+                 *args, **kwargs,
+                 ):
+        super().__init__(*args, **kwargs)
+        self.strategy_label = 'pct'
+        self.pct_period = pct_period
+        self.pct_edge = pct_edge
+
+        self.price_ind = indicators.Price()
+        self.pct_ind = indicators.PercentChange(pct_period)
+        self.pct_edge = indicators.Constant(pct_edge)
+        self.cross_up_signal = signals.Crossover(kind='up',
+                                                 minor_indicator=self.pct_ind,
+                                                 major_indicator=self.pct_edge)
+
+        self.buy_conditions = {'signal_generators': [self.cross_up_signal], 'merge_type': 'and'}
+        self.plot_config = [{'major': self.price_ind}, {'major': self.pct_ind, 'minor': [self.pct_edge]}]
+
+
+class PCTFixedStop(PCTStrategy, FixedStopStrategy):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._add_stops_to_plot()

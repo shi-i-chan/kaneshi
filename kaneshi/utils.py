@@ -1,5 +1,6 @@
 import io
 import os
+import h5py
 import shutil
 import numpy as np
 import pandas as pd
@@ -90,3 +91,19 @@ def plotly_to_array(figure: go.Figure) -> NDArray[float]:
     img = Image.open(buf)
     return (np.asarray(img) / 255).astype('float32')  # NOQA
 
+
+def ds_to_h5(filename: str, data: dict) -> NoReturn:
+    """ Save dict to h5 """
+    with h5py.File(f"{filename}", "w") as file:
+        for label, values in data.items():
+            file.create_dataset(label, np.shape(values), data=values)
+
+
+def ds_from_h5(filename: str) -> dict:
+    """ Read h5 file as dict """
+    data = {}
+    with h5py.File(f'{filename}', 'r') as file:
+        labels = list(file.keys())
+        for label in labels:
+            data[label] = np.array(file[f'/{label}'])
+    return data

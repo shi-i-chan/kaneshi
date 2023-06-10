@@ -4,7 +4,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
-from kaneshi.utils import read_df
+from kaneshi.utils import read_df, ds_to_h5
 from kaneshi.config import DEF_MARKET_DATA_PATH, DEF_PLT_FIGSIZE, DEF_PLOTLY_HEIGHT, DEF_PLOTLY_WIDTH
 
 from numpy.typing import NDArray
@@ -48,6 +48,26 @@ class MarketData:
         raw_df = read_df(rf'{DEF_MARKET_DATA_PATH}\raw_{symbol}_1m')
         return cls(raw_df=raw_df, symbol=symbol, interval=interval,
                    s_date=s_date, e_date=e_date, columns=columns, price_type=price_type)
+
+    # ONLY FOR MINUTES
+    def dataset_from_indices(self, lookback: int, good_indices: NDArray,
+                             bad_indices: NDArray, dataset_fn: str = None) -> NoReturn:
+        """ Create dataset from buy indices """
+        examples, labels, indices = [[] for _ in range(3)]
+        buy_indices = np.concatenate([good_indices, bad_indices])
+        for end_index in buy_indices:
+            start_index = end_index - np.timedelta64(lookback - 1, 'm')
+            if start_index in self.raw_df.index and end_index in self.raw_df.index:
+                label = 1 if end_index in good_indices else 0 if end_index in bad_indices else None
+                example = self.raw_df[start_index: end_index].values
+                if example.shape[0] == lookback:
+                    labels.append(label)
+                    examples.append(example)
+                    indices.append(end_index)
+        data = {'examples': np.array(examples),
+                'labels': np.array(labels),
+                'indices': np.array(indices).astype(np.int64)}
+        ds_to_h5(dataset_fn, data)
 
     def get_price(self) -> NDArray:
         """ Get price from full dataframe """
