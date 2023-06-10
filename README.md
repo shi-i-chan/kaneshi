@@ -262,7 +262,7 @@ CNN 1D model example
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/cnn1d_model.ipynb)
  
-As expected from the existing data set, the model overfits and does not show any results. On the validation dataset the loss increased, not the accuracy.
+As expected from the existing dataset, the model overfits and does not show any results. On the validation dataset the loss increased, not the accuracy.
 
 Similar results are obtained with another architectures, tuning and other changes. The problem is data.
   
