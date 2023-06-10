@@ -170,7 +170,7 @@ class StrategyPlotting(StrategyVariables):
         else:
             return np.array(indices)
 
-    def _cumulative_deposit(self) -> NDArray[int]:
+    def _cumulative_deposit(self) -> NDArray[int]:  # DRY
         """ Get deposit changing chart with cumulative entry into position """
         deps_chart = []
         dep = 100
@@ -181,7 +181,7 @@ class StrategyPlotting(StrategyVariables):
             deps_chart.append(dep)
         return np.array(deps_chart) - 100
 
-    def _equal_deposit(self) -> NDArray[int]:
+    def _equal_deposit(self) -> NDArray[int]:  # DRY
         """ Get deposit changing chart with equal entry into position"""
         trades = self.trades
         start_dep = 100
