@@ -112,3 +112,17 @@ class RSI(DefaultIndicator):  # based on EMA and SMA
         rsi = 100 - (100 / (1 + rsi))
         self.values = rsi.values
         return self.values
+
+
+class PercentChange(DefaultIndicator):
+    def __init__(self, period: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.periods = period
+        self.label = f'Percent change {period}' if self.label is None else self.label
+
+    def apply_to(self, price_array: NDArray) -> NDArray:
+        """ Apply indicator to price array. In this case calc percent change by period """
+        price_series = pd.Series(price_array)
+        pct_change = price_series.pct_change(periods=self.periods).values
+        self.values = pct_change * 100
+        return self.values
