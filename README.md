@@ -2,218 +2,93 @@
 
 A little project with backtesting some algorithmic trading strategies, Binance trading bots, and some machine learning.
 
-<details>
-<summary>
-Getting Binance data
-</summary>
+- ### Getting Binance data
+
+<ul>
 
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/get_binance_data.ipynb)
+
+</ul>
   
-```python
-from kaneshi.binance_data.binance_data import BinanceVisionData
+- ### Read market data
 
-config = {
-    's_date': (2021, 1, 1),
-    'e_date': (2023, 4, 1),
-    'type_':  'monthly',
-    'symbols': ['BTCUSDT', 'ETHUSDT', 'XRPUSDT']
-}
-
-with BinanceVisionData(**config) as binance_data:
-    binance_data.get_candles()
-```
-
-Files `raw_BTCUSDT_1m.h5`, `raw_ETHUSDT_1m.h5`, etc will appear in folder `kaneshi\kaneshi\data\market_data`
-  
-</details>
-
-<details>
-<summary>
-Read market data
-</summary>
+<ul>
 
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/market_data.ipynb)
 
-```python
-from kaneshi.core.market_data import MarketData
-  
-config = {'symbol': 'BTCUSDT',
-          'interval': 1,
-          's_date': (2021, 1, 1),
-          'e_date': (2021, 2, 1),
-          'columns': 'Close',
-          'price_type': 'Close',
-          }
+</ul>
 
-market = MarketData.from_config(**config)
-```
+- ### Clear MA crossover strategy
 
-</details>
-
-<details open>
-<summary>
-Clear MA crossover strategy
-</summary>
+<ul>
 
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/smac_clear_strategy.ipynb)
-  
-```python
-from kaneshi.core.strategies import SMACClear
 
-s_config = {
-    'sma': 14,
-    'lma': 50,
-    'market_data': market,
-}
+</ul>
 
-s = SMACClear(**s_config).apply()
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/SMAC_clear_plot.png)
 
-s.generate_report()
 
-```
+- ### Fixed stop MA crossover strategy
 
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/smac_clear_report.png)
+<ul>
 
-```python
-s.plot(plot_type='plt')  
-```
-  
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/smac_clear_plot.png)
-  
-</details>
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/smac_fixed_stop_strategy.ipynb)
 
-<details>
-<summary>
-Fixed stop MA crossover strategy
-</summary>
+</ul>
 
-[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/smac_det_stop_strategy.ipynb)
-  
-```python
-from kaneshi.core.strategies import SMACFixedStop
-  
-s_config = {
-    'sma': 14,
-    'lma': 50,
-    'stop_loss_percent': -0.01,
-    'take_profit_percent': 0.01,
-    'market_data': market,
-}
-
-s = SMACFixedStop(**s_config).apply()
-  
-s.generate_report()
-```
-
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/smac_fixed_stop_report.png)
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/SMAC_stop_take_plot.png)
  
-```python
-s.plot(plot_type='plt')  
-```
+
+- ### Clear RSI oversold overbought strategy
+ 
+<ul>
+ 
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_overbought_oversold_clear_strategy.ipynb)
+
+</ul>
   
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/smac_fixed_stop_plot.png)
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/RSIOBS_clear_plot.png)
+
+
+- ### Fixed stop RSI oversold overbought strategy
+
+<ul>
+
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_overbought_oversold_fixed_stop_strategy.ipynb)
   
-</details>
+</ul>
 
-<details>
-<summary>
-Clear RSI strategy
-</summary>
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/RSIOBS_stop_take_plot.png)
+
+- ### Clear RSI oversold one edge overbought strategy
+ 
+<ul>
+ 
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_overbought_oversold_one_edge_clear_strategy.ipynb)
+
+</ul>
   
-[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_clear_strategy.ipynb)
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/RSIOBSOneEdge_clear_plot.png)
 
-```python
-from kaneshi.core.strategies import RSIOBSClear
 
-s_config = {
-    'rsi_period': 14,
-    'bottom_edge': 20,
-    'upper_edge': 60,
-    'market_data': market,
-}
+- ### Fixed stop RSI oversold one edge overbought strategy
 
-s = RSIOBSClear(**s_config).apply()
+<ul>
 
-s.generate_report()
-```
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_overbought_oversold_one_edge_fixed_stop_strategy.ipynb)
   
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/rsi_clear_report.png)
+</ul>
 
-```python
-s.plot(plot_type='plt')
-```
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/RSIOBSOneEdge_stop_take_plot.png)
 
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/rsi_clear_plot.png)
-  
-</details>
+- ### Fixed stop PCT strategy (not tested normally)
 
+<ul>
 
-<details open>
-<summary>
-Fixed stop RSI strategy
-</summary>
-  
-[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_det_stop_strategy.ipynb)
-
-```python
-from kaneshi.core.strategies import RSIOBSFixedStop
-
-s_config = {
-    'rsi_period': 14,
-    'bottom_edge': 20,
-    'upper_edge': 60,
-    'stop_loss_percent': -0.01,
-    'take_profit_percent': 0.01,
-    'market_data': market,
-}
-
-s = RSIOBSFixedStop(**s_config).apply()
-
-s.generate_report()
-```
-
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/rsi_fixed_stop_report.png)
-
-```python
-s.plot(plot_type='plt')  
-```
-  
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/rsi_fixed_stop_plot.png)
-  
-</details>
-
-<details open>
-<summary>
-Fixed stop PCT strategy (not tested normally)
-</summary>
-  
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/pct_fixed_stop_strategy.ipynb)
- 
-```python
-from kaneshi.core.strategies import PCTFixedStop
-  
-s_config = {
-    'pct_period': 14,
-    'pct_edge': 0.01,
-    'stop_loss_percent': -0.01,
-    'take_profit_percent': 0.01,
-    'market_data': market,
-}
 
-s = PCTFixedStop(**s_config).apply()
-  
-s.generate_report()
-```
-
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/pct_fixed_stop_report.png)
-
-```python
-s.plot(plot_type='plt')  
-```
-  
-![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/screens/pct_fixed_stop_plot.png)
-  
-</details>
+</ul>
 
 <details>
 <summary>
@@ -221,12 +96,6 @@ Create dataset
 </summary>
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/create_dataset.ipynb)
- 
-```python
-# init and apply strategy
-  
-s.create_dataset(lookback=100, dataset_fn='file_name')
-```
 
 File `file_name.h5` will appear in folder `kaneshi/kaneshi/data/datasets`.
 
@@ -271,9 +140,9 @@ Similar results are obtained with another architectures, tuning and other change
 </details>
 
 
-<details open>
+<details>
 <summary>
-Clear RSI strategy Binance trading bot (not tested normally)
+Clear RSI oversold overbought strategy Binance trading bot (not tested normally)
 </summary>
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/trading/rsi_clear_bot.py)
