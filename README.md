@@ -121,10 +121,10 @@ Clear RSI strategy
 </summary>
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_clear_strategy.ipynb)
-  
+
 ```python
-from kaneshi.core.strategies import RSIClear
-  
+from kaneshi.core.strategies import RSIOBSClear
+
 s_config = {
     'rsi_period': 14,
     'bottom_edge': 20,
@@ -132,8 +132,8 @@ s_config = {
     'market_data': market,
 }
 
-s = RSIClear(**s_config).apply()
- 
+s = RSIOBSClear(**s_config).apply()
+
 s.generate_report()
 ```
   
@@ -154,10 +154,10 @@ Fixed stop RSI strategy
 </summary>
   
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/rsi_det_stop_strategy.ipynb)
- 
+
 ```python
-from kaneshi.core.strategies import RSIFixedStop
-  
+from kaneshi.core.strategies import RSIOBSFixedStop
+
 s_config = {
     'rsi_period': 14,
     'bottom_edge': 20,
@@ -167,8 +167,8 @@ s_config = {
     'market_data': market,
 }
 
-s = RSIFixedStop(**s_config).apply()
-  
+s = RSIOBSFixedStop(**s_config).apply()
+
 s.generate_report()
 ```
 

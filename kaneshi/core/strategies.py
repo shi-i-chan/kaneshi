@@ -48,7 +48,7 @@ class SMACFixedStop(SMACStrategy, FixedStopStrategy):
         self._add_stops_to_plot()
 
 
-class RSIStrategy(Strategy):
+class RSIOverBSStrategy(Strategy):
     def __init__(self,
                  rsi_period: int = None,
                  bottom_edge: int = None,
@@ -56,7 +56,7 @@ class RSIStrategy(Strategy):
                  *args, **kwargs,
                  ):
         super().__init__(*args, **kwargs)
-        self.strategy_label = 'rsi'
+        self.strategy_label = 'rsi_obs'
         self.rsi_period = rsi_period
         self.bottom_edge = bottom_edge
         self.upper_edge = upper_edge
@@ -81,12 +81,52 @@ class RSIStrategy(Strategy):
         return raw_indices
 
 
-class RSIClear(RSIStrategy, ClearStrategy):
+class RSIOBSClear(RSIOverBSStrategy, ClearStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
-class RSIFixedStop(RSIStrategy, FixedStopStrategy):
+class RSIOBSFixedStop(RSIOverBSStrategy, FixedStopStrategy):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._add_stops_to_plot()
+
+
+class RSIOverBSOneEdgeStrategy(Strategy):
+    def __init__(self,
+                 rsi_period: int,
+                 edge: int,
+                 *args, **kwargs,
+                 ):
+        super().__init__(*args, **kwargs)
+        self.strategy_label = 'rsi_over_bs_one_edge'
+        self.rsi_period = rsi_period
+        self.edge = edge
+
+        self.price_ind = indicators.Price()
+        self.rsi_ind = indicators.RSI(rsi_period)
+        self.edge_ind = indicators.Constant(edge, color='green',
+                                            label=f'Edge {self.edge}')
+        self.cross_down_signal = signals.Crossover('up', self.rsi_ind, self.edge_ind)
+        self.cross_up_signal = signals.Crossover('down', self.rsi_ind, self.edge_ind)
+        self.buy_conditions = {'signal_generators': [self.cross_down_signal]}
+        self.sell_conditions = {'signal_generators': [self.cross_up_signal]}
+        self.plot_config = [{'major': self.price_ind},
+                            {'major': self.rsi_ind, 'minor': [self.edge_ind]}]
+
+    def _fix_bug_with_first_signals(self, raw_indices: NDArray[np.int32]) -> NDArray[np.int32]:
+        """ Remove signal if it arose due to nan """
+        bad_indices_indices = np.argwhere((raw_indices == self.rsi_period))  # NOQA
+        raw_indices = np.delete(raw_indices, bad_indices_indices)
+        return raw_indices
+
+
+class RSIOBSOneEdgeClear(RSIOverBSOneEdgeStrategy, ClearStrategy):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class RSIOBSOneEdgeFixedStop(RSIOverBSOneEdgeStrategy, FixedStopStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._add_stops_to_plot()
@@ -118,3 +158,5 @@ class PCTFixedStop(PCTStrategy, FixedStopStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._add_stops_to_plot()
+
+

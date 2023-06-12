@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from kaneshi.utils import read_df
 from kaneshi.core.market_data import MarketData
 
-from kaneshi.core.strategies import RSIClear, RSIFixedStop, SMACClear, SMACFixedStop
+from kaneshi.core.strategies import RSIOBSClear, RSIOBSFixedStop, SMACClear, SMACFixedStop, RSIOBSOneEdgeClear, \
+    RSIOBSOneEdgeFixedStop
 
 from numpy.typing import NDArray
 
@@ -18,9 +19,9 @@ def check_plots(real_image: NDArray, plot_fn: str) -> bool:
     return np.array_equal(real_image, expected_image)
 
 
-class TestClearRSIStrategy(TestCase):
+class TestRSIOBSStrategies(TestCase):
     def setUp(self) -> None:
-        self.s_name = 'RSI'
+        self.s_name = 'RSIOBS'
         self.params = {'rsi_period': 7,
                        'bottom_edge': 20,
                        'upper_edge': 80}
@@ -28,21 +29,21 @@ class TestClearRSIStrategy(TestCase):
         self.stop_loss_percent = -0.01
         self.take_profit_percent = 0.01
 
-        self.clear = RSIClear(**self.params,
-                              market_data=market_data).apply()
+        self.clear = RSIOBSClear(**self.params,
+                                 market_data=market_data).apply()
 
-        self.stop_loss = RSIFixedStop(**self.params,
-                                      stop_loss_percent=self.stop_loss_percent,
-                                      market_data=market_data).apply()
+        self.stop_loss = RSIOBSFixedStop(**self.params,
+                                         stop_loss_percent=self.stop_loss_percent,
+                                         market_data=market_data).apply()
 
-        self.take_profit = RSIFixedStop(**self.params,
-                                        take_profit_percent=self.take_profit_percent,
-                                        market_data=market_data).apply()
+        self.take_profit = RSIOBSFixedStop(**self.params,
+                                           take_profit_percent=self.take_profit_percent,
+                                           market_data=market_data).apply()
 
-        self.stop_take = RSIFixedStop(**self.params,
-                                      stop_loss_percent=self.stop_loss_percent,
-                                      take_profit_percent=self.take_profit_percent,
-                                      market_data=market_data).apply()
+        self.stop_take = RSIOBSFixedStop(**self.params,
+                                         stop_loss_percent=self.stop_loss_percent,
+                                         take_profit_percent=self.take_profit_percent,
+                                         market_data=market_data).apply()
 
         self.strategies = {'clear': self.clear,
                            'stop_loss': self.stop_loss,
@@ -65,7 +66,53 @@ class TestClearRSIStrategy(TestCase):
                 self.assertTrue(check_plots(s.plot(plot_type='array'), f'{self.s_name}_{s_type}_plot.png'))
 
 
-class TestClearSMACrossover(TestCase):
+class TestRSIOBSOneEdgeStrategies(TestCase):
+    def setUp(self) -> None:
+        self.s_name = 'RSIOBSOneEdge'
+        self.params = {'rsi_period': 7,
+                       'edge': 30}
+
+        self.stop_loss_percent = -0.01
+        self.take_profit_percent = 0.01
+
+        self.clear = RSIOBSOneEdgeClear(**self.params,
+                                        market_data=market_data).apply()
+
+        self.stop_loss = RSIOBSOneEdgeFixedStop(**self.params,
+                                                stop_loss_percent=self.stop_loss_percent,
+                                                market_data=market_data).apply()
+
+        self.take_profit = RSIOBSOneEdgeFixedStop(**self.params,
+                                                  take_profit_percent=self.take_profit_percent,
+                                                  market_data=market_data).apply()
+
+        self.stop_take = RSIOBSOneEdgeFixedStop(**self.params,
+                                                stop_loss_percent=self.stop_loss_percent,
+                                                take_profit_percent=self.take_profit_percent,
+                                                market_data=market_data).apply()
+
+        self.strategies = {'clear': self.clear,
+                           'stop_loss': self.stop_loss,
+                           'take_profit': self.take_profit,
+                           'stop_take': self.stop_take}
+
+        self.reports = {'clear': [348, -7.206956, -28.564406, 0.270115, 1293.62069, 0.250511, -0.074707],
+                        'stop_loss': [51, -58.57066, -44.517128, 0.0, 4256.470588, -0.01, -0.01],
+                        'take_profit': [56, 47.519181, 60.510153, 1.0, 2401.071429, 0.01, 0.01],
+                        'stop_take': [307, -15.079214, -15.296495, 0.550489, 279.674267, 0.01, -0.01]}
+
+    def test_reports(self):
+        for s_type, s in self.strategies.items():
+            with self.subTest():
+                self.assertEqual(s.generate_report(), self.reports[s_type])
+
+    def test_plots(self):
+        for s_type, s in self.strategies.items():
+            with self.subTest(msg=f'{self.s_name}_{s_type}_plot'):
+                self.assertTrue(check_plots(s.plot(plot_type='array'), f'{self.s_name}_{s_type}_plot.png'))
+
+
+class TestSMACStrategies(TestCase):
     def setUp(self) -> None:
         self.s_name = 'SMAC'
         self.params = {'sma': 100,
