@@ -171,8 +171,8 @@ class BBStrategy(Strategy):
 
         self.price_ind = indicators.Price()
         self.ma_ind = indicators.Simple_MA(ma_window=self.ma_period, color='orange')
-        self.upper_bb_ind = indicators.UpperBB(period=self.ma_period, color='purple')
-        self.lower_bb_ind = indicators.LowerBB(period=self.ma_period, color='purple')
+        self.upper_bb_ind = indicators.UpperBB(period=self.ma_period, color='goldenrod')
+        self.lower_bb_ind = indicators.LowerBB(period=self.ma_period, color='goldenrod')
 
         self.cross_up_signal = signals.Crossover(kind='up',
                                                  minor_indicator=self.price_ind,
