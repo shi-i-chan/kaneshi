@@ -160,3 +160,37 @@ class PCTFixedStop(PCTStrategy, FixedStopStrategy):
         self._add_stops_to_plot()
 
 
+class BBStrategy(Strategy):
+    def __init__(self,
+                 ma_period: int,
+                 *args, **kwargs,
+                 ):
+        super().__init__(*args, **kwargs)
+        self.strategy_label = 'bb'
+        self.ma_period = ma_period
+
+        self.price_ind = indicators.Price()
+        self.ma_ind = indicators.Simple_MA(ma_window=self.ma_period, color='orange')
+        self.upper_bb_ind = indicators.UpperBB(period=self.ma_period, color='purple')
+        self.lower_bb_ind = indicators.LowerBB(period=self.ma_period, color='purple')
+
+        self.cross_up_signal = signals.Crossover(kind='up',
+                                                 minor_indicator=self.price_ind,
+                                                 major_indicator=self.lower_bb_ind)
+        self.cross_down_signal = signals.Crossover(kind='down',
+                                                   minor_indicator=self.price_ind,
+                                                   major_indicator=self.upper_bb_ind)
+        self.buy_conditions = {'signal_generators': [self.cross_up_signal], 'merge_type': 'and'}
+        self.sell_conditions = {'signal_generators': [self.cross_down_signal], 'merge_type': 'and'}
+        self.plot_config = [{'major': self.price_ind, 'minor': [self.ma_ind, self.upper_bb_ind, self.lower_bb_ind]}]
+
+
+class BBClear(BBStrategy, ClearStrategy):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class BBFixedStop(BBStrategy, FixedStopStrategy):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._add_stops_to_plot()

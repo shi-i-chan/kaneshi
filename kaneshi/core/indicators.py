@@ -128,3 +128,31 @@ class PercentChange(DefaultIndicator):
         return self.values
 
 
+class UpperBB(DefaultIndicator):
+    def __init__(self, period: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.period = period
+        self.label = f'Upper BB {period}' if self.label is None else self.label
+
+    def apply_to(self, price_array: NDArray) -> NDArray:
+        price_series = pd.Series(price_array)
+        sma = price_series.rolling(window=self.period).mean()
+        std = price_series.rolling(window=self.period).std()
+        upper_bb = sma + std * 2
+        self.values = upper_bb.values
+        return self.values
+
+
+class LowerBB(DefaultIndicator):
+    def __init__(self, period: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.period = period
+        self.label = f'Lower BB {period}' if self.label is None else self.label
+
+    def apply_to(self, price_array: NDArray) -> NDArray:
+        price_series = pd.Series(price_array)
+        sma = price_series.rolling(window=self.period).mean()
+        std = price_series.rolling(window=self.period).std()
+        lower_bb = sma - std * 2
+        self.values = lower_bb.values
+        return self.values
