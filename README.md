@@ -61,7 +61,7 @@ A little project with backtesting some algorithmic trading strategies, Binance t
 
 ![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/RSIOBS_stop_take_plot.png)
 
-- ### Clear RSI oversold one edge overbought strategy
+- ### Clear RSI oversold overbought one edge strategy
  
 <ul>
  
@@ -72,7 +72,7 @@ A little project with backtesting some algorithmic trading strategies, Binance t
 ![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/RSIOBSOneEdge_clear_plot.png)
 
 
-- ### Fixed stop RSI oversold one edge overbought strategy
+- ### Fixed stop RSI oversold overbought one edge strategy
 
 <ul>
 
@@ -89,6 +89,30 @@ A little project with backtesting some algorithmic trading strategies, Binance t
 [Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/pct_fixed_stop_strategy.ipynb)
 
 </ul>
+
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/PCT_stop_take_plot.png)
+
+
+- ### Clear Bollinger bands strategy (not tested normally)
+
+<ul>
+
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/bb_clear_strategy.ipynb)
+
+</ul>
+
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/BB_clear_plot.png)
+
+
+- ### Fixed stop Bollinger bands strategy (not tested normally)
+
+<ul>
+
+[Example](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/examples/bb_fixed_stop_strategy.ipynb)
+
+</ul>
+
+![image](https://github.com/shi-i-chan/kaneshi/blob/main/kaneshi/tests/charts/BB_stop_take_plot.png)
 
 <details>
 <summary>
