@@ -126,3 +126,5 @@ class PercentChange(DefaultIndicator):
         pct_change = price_series.pct_change(periods=self.periods).values
         self.values = pct_change * 100
         return self.values
+
+
